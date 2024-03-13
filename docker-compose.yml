@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  db:
+    container_name: vk-postgres
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: vk
+      POSTGRES_PASSWORD: vk
+      POSTGRES_DB: vk
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  app:
+    container_name: vk-backend
+    build: .
+    ports:
+      - "8080:8080"
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/vk
+      - SPRING_DATASOURCE_USERNAME=vk
+      - SPRING_DATASOURCE_PASSWORD=vk
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+
+volumes:
+    postgres-data:
